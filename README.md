@@ -20,6 +20,6 @@ Using:
 		--callback
 	end)
 
-Tips:
+## Tips
 
 	init可以传心跳的interval间隔，默认为1s
