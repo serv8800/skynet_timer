@@ -14,8 +14,12 @@ end
 
 function timer.init(self, interval)
 	if not interval then
-		self.interval = 100
+		interval = 100
 	end
+
+	self.inc = 0
+
+	self.interval = interval
 
 	self.timer_idx = 0
 
@@ -33,9 +37,9 @@ function timer.on_time_out(self)
 		self:on_time_out()
 	end)
 
-	local now = os.time()
+	self.inc = self.inc + 1
 
-	local callbacks = self.callbacks[now]
+	local callbacks = self.callbacks[self.inc]
 
 	if not callbacks then
 		return
@@ -46,13 +50,13 @@ function timer.on_time_out(self)
 		self.timer_idxs[idx] = nil
 	end
 
-	self.callbacks[now] = nil
+	self.callbacks[self.inc] = nil
 end
 
-function timer.register(self, sec, f)
+function timer.register(self, sec, f, loop)
 	assert(type(sec) == "number" and sec > 0)
 
-	sec = os.time() + sec
+	sec = self.inc + sec
 
 	self.timer_idx = self.timer_idx + 1
 
@@ -63,6 +67,10 @@ function timer.register(self, sec, f)
 	end
 
 	local callbacks = self.callbacks[sec]
+
+	if not loop then
+		loop = false
+	end
 
 	callbacks[self.timer_idx] = f
 
